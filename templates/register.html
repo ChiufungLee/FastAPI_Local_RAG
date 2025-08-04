@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>用户注册</h2>
+        
+        <!-- 错误信息区域 -->
+         {% if error %}
+        <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>{{ error }}</div>
+        </div>
+        {% endif %}
+        
+        <form method="post" action="/register">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="username" name="username" required placeholder="请输入用户名">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码</label>
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="password" name="password" required placeholder="请输入密码">
+            </div>
+            
+            <div class="form-group">
+                <label for="re_password">确认密码</label>
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="re_password" name="re_password" required placeholder="请确认密码">
+            </div>
+
+            <button type="submit">
+                <i class="fas fa-sign-in-alt"></i> 注 册
+            </button>
+        </form>
+        
+        <a href="/login" class="register-link">已有账号？去登录</a>
+        
+        <div class="footer">
+            <p>© 2025 联系 <a href="mailto:lzfdd937@163.com" class="email-link">lzfdd937@163.com</a></p>
+        </div>
+    </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+    const password = document.getElementById('password');
+    const rePassword = document.getElementById('re_password');
+
+    // 创建错误提示元素
+    const errorDiv = document.createElement('div');
+    errorDiv.id = 'password-error';
+    errorDiv.className = 'error-message';
+    errorDiv.style.display = 'none';
+    errorDiv.innerHTML = `
+        <i class="fas fa-exclamation-circle"></i>
+        <div>两次输入的密码不一致</div>
+    `;
+
+    // 将错误提示插入到确认密码输入框下方
+    const formGroup = rePassword.parentNode;
+    formGroup.appendChild(errorDiv);
+
+    // 表单提交事件监听
+    form.addEventListener('submit', function (event) {
+        const pass = password.value.trim();
+        const rePass = rePassword.value.trim();
+
+        if (pass !== rePass) {
+            errorDiv.style.display = 'block';
+            event.preventDefault(); // 阻止表单提交
+        } else {
+            errorDiv.style.display = 'none'; // 隐藏错误提示
+        }
+    });
+
+    // 实时验证（可选，提升用户体验）
+    rePassword.addEventListener('input', function () {
+        const pass = password.value.trim();
+        const rePass = rePassword.value.trim();
+        if (pass !== rePass) {
+            errorDiv.style.display = 'block';
+        } else {
+            errorDiv.style.display = 'none';
+        }
+    });
+});
+</script>
+</body>
+</html>

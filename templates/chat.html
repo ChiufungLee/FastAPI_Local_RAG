@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能助手</title>
+    <link rel="stylesheet" href="/static/chat.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>
+
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar" aria-label="聊天导航">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" aria-label="新建对话" id="newChatBtn">新建对话</button>
+                <!-- <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" placeholder="搜索历史对话" aria-label="搜索历史对话" id="searchInput">
+                </div> -->
+            </div>
+            
+            <div class="conversation-history" id="historyContainer">
+                <div class="loader">加载历史记录中...</div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="function-grid" id="scenarioGrid">
+                    <div class="function-item active" data-scenario="产品手册">产品指南</div>
+                    <div class="function-item" data-scenario="运维助手">运维助手</div>
+                    <div class="function-item" data-scenario="需求挖掘">需求分析</div>
+                    <div class="function-item" data-scenario="用例生成">用例生成</div>
+                    
+                    
+                </div>
+                
+                <div class="userInfo" id="userInfo">
+                    <div class="user-avatar">
+                        <img class="avatar-img" src="/static/default_avatar.png" alt="用户头像">
+                    </div>
+                    <div class="username">个人信息</div>
+
+                    <div class="dropdown-content" id="dropdownContent">
+                        <div class="dropdown-item">{{username}}</div>
+                        <div class="dropdown-item" onclick="logout()">退出登录</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- 右侧主内容区 -->
+        <main class="main-content">
+            <header class="chat-header">
+                <h1 class="chat-title" id="chatTitle">有问题就会有答案</h1>
+                <!-- <p class="chat-slogan">有问题就会有答案</p> -->
+            </header>
+            
+            <section class="chat-messages" aria-label="聊天记录" id="chatMessages">
+                <div class="message-container">
+                    <div class="message ai-message">
+                        <div class="message-header">
+                            <div class="avatar ai-avatar" aria-label="AI头像">O</div>
+                            <div class="sender-name">智能助手</div>
+                        </div>
+                        <div class="message-content">
+                            你好！我是智能助手，你的智能工作助手，我可以帮助你分析需求、生成测试用例、进行问题分析等，有什么我可以帮你的吗？
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 输入区域 -->
+            <div class="input-container">
+                <div class="input-area">
+                    <textarea class="chat-input" placeholder="输入您的问题..." aria-label="聊天输入框" id="chatInput"></textarea>
+                    <div class="input-actions">
+                        <!-- <button class="action-btn" aria-label="附加文件">📎</button>
+                        <button class="action-btn" aria-label="表情符号">😊</button> -->
+                        <button class="send-btn" aria-label="发送" id="sendBtn" disabled>➤</button>
+                    </div>
+                </div>
+            </div>
+            
+            <footer class="footer-note">
+                © 2025 快乐生活 <a href="mailto:lzfdd937@163.com" class="email-link">lzfdd937@163.com</a>
+            </footer>
+        </main>
+    </div>
+
+<script src="/static/chat.js"></script>
+</body>
+</html>

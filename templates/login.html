@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>用户登录</h2>
+        
+        <!-- 错误信息区域 -->
+         {% if error %}
+        <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>{{ error }}</div>
+        </div>
+        {% endif %}
+        
+        <form method="post" action="/login">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="username" name="username" required placeholder="请输入用户名">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码</label>
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="password" name="password" required placeholder="请输入密码">
+            </div>
+
+            <button type="submit">
+                <i class="fas fa-sign-in-alt"></i> 登 录
+            </button>
+        </form>
+        
+        <a href="/register" class="register-link">没有账号？去注册</a>
+        
+        <div class="footer">
+            <p>© 2025 联系 <a href="mailto:lzfdd937@163.com" class="email-link">lzfdd937@163.com</a></p>
+        </div>
+    </div>
+
+</body>
+</html>
