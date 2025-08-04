@@ -15,6 +15,16 @@
 - 对话历史管理
 - 实时响应流式传输
 
+### 功能演示
+产品指南知识库
+![alt text](image-4.png)
+
+支持导出测试用例
+![alt text](image-6.png)
+![alt text](image-2.png)
+
+运维工单知识库
+![alt text](image-5.png)
 
 ## 技术栈
 
@@ -52,7 +62,7 @@
    ```
 
 3. **配置环境变量**
-   复制 `.env.example` 文件并重命名为 `.env`，然后填入你的配置：
+   在根目录创建 `.env` 文件，然后填入你的配置：
    ```env
     DEEPSEEK_API_KEY="your_api_key"
     ALIYUN_API_KEY="your_api_key"

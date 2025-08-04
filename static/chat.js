@@ -729,3 +729,7 @@ function convertTableToCSV(tableData) {
     ).join('\n');
     return csvContent;
 }
+
+function about() {
+    alert("© 2025 快乐生活，有问题请联系 lzfdd937@163.com ~");
+}
