@@ -5,48 +5,51 @@
 ## 主要功能
 
 ### 🧠 核心 RAG 功能
-- 文档上传与向量化存储
+- 文档内容提取(目前支持 PDF 文件)
+- 向量化存储
 - 基于语义相似度的上下文检索
 - 检索增强的问答生成
-- 多文档源的知识库管理
+- 多文档源的知识库（运维工单、产品手册）
 
 ### 🌐 Web 功能
-- 用户友好的问答界面
+- 友好的问答界面
 - 对话历史管理
-- 实时响应流式传输
+- 实时流式传输
+- 测试用例导出
+
+### 规划功能
+- MCP功能，例如爬虫采集数据源入库
 
 ### 功能演示
+
+Demo 在线地址：http://119.91.21.107:8000/
+
 产品指南知识库
-![alt text](image-4.png)
+![alt text](static/images/image-4.png)
 
 支持导出测试用例
-![alt text](image-6.png)
-![alt text](image-2.png)
+![alt text](static/images/image-6.png)
+![alt text](static/images/image-2.png)
 
 运维工单知识库
-![alt text](image-5.png)
+![alt text](static/images/image-5.png)
 
 ## 技术栈
 
-### 后端
 - **FastAPI** 
 - **LangChain** 
 - **SQLite** 
-
-### 前端
 - **Jinja2** 
+- 嵌入模型：**阿里百炼 text-embedding-v4**
+- LLM 模型：**DeepSeek**
 
-### 嵌入模型
-- **阿里百炼 text-embedding-v4**
 
-### LLM模型
-- **DeepSeek**
+
 
 ## 快速开始
 
 ### 前提条件
-- Python 3.12+
-- DeepSeek、阿里百炼 API KEY
+- 申请 DeepSeek、阿里百炼 API KEY
 
 ### 安装步骤
 
@@ -93,17 +96,19 @@
 ├── requirements.txt
 ├── retriever.py
 ├── static
+│   ├── images
 │   ├── chat.css
 │   ├── chat.js
-│   ├── default.png
-│   ├── default_avatar.png
-│   └── style.css
+|   └── style.css
 ├── templates
 │   ├── chat.html
 │   ├── login.html
 │   └── register.html
 └── utils
-    └── file_handle.py
+   ├── __init__.py
+   ├── file_handle.py
+   └── retriever.py
+
 ```
 
 ## API 文档
@@ -130,7 +135,7 @@
 ## 联系信息
 
 如有问题或建议，请联系：
-- 作者：CHIUFUNGLEE
+- 作者：@CHIUFUNGLEE
 - 邮箱：lzfdd937@163.com
 - GitHub Issues: [https://github.com/ChiufungLee/FastAPI_Local_RAG/issues](https://github.com/ChiufungLee/FastAPI_Local_RAG/issues)
 

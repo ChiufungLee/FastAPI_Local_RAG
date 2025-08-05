@@ -85,8 +85,7 @@ function renderHistory(historyData) {
     if (!historyData || !historyData.groups || historyData.groups.length === 0) {
         elements.historyContainer.innerHTML = `
             <div class="empty-state">
-                <div class="empty-state-icon">📁</div>
-                <p>没有历史对话记录</p>
+                <p>暂无历史对话记录</p>
             </div>
         `;
         return;
@@ -305,7 +304,10 @@ function addMessageToChat(message, isRealtime = false) {
     if (!isUser && appState.currentScenario === '用例生成') {
         // 存储原始内容以便导出
         messageContainer.dataset.raw = message.content;
-        addExportButton(messageContainer);
+        // addExportButton(messageContainer);
+        setTimeout(() => {
+            addExportButton(messageContainer);
+        }, 100);
     }
     
     // 如果是AI的实时消息，使用打字机效果
@@ -351,11 +353,20 @@ function setupEventListeners() {
             elements.chatTitle.textContent = "有问题就会有答案";
             
             // 清空聊天区域
-            const welcomeMessage = elements.chatMessages.querySelector('.message-container');
             elements.chatMessages.innerHTML = '';
-            if (welcomeMessage) {
-                elements.chatMessages.appendChild(welcomeMessage);
-            }
+            // 添加场景特定的欢迎消息
+            const scenarioWelcome = {
+                "产品手册": "本功能产品为容灾备份产品，你可以询问我关于如何使用我们备份产品的功能介绍，我会在此基础上为你解答",
+                "运维助手": "欢迎使用运维助手，我可以帮助您解决运维相关问题",
+                "需求挖掘": "需求分析场景已就绪，请描述您的需求",
+                "用例生成": "本场景会基于你的输入，自动生成测试用例，并支持导出"
+            };
+            
+            const welcomeMsg = {
+                role: "assistant",
+                content: scenarioWelcome[appState.currentScenario] || "你好！我是你的智能助手"
+            };
+            addMessageToChat(welcomeMsg);
         });
     });
     
@@ -425,6 +436,7 @@ async function sendMessage() {
                     <div class="sender-name">智能助手</div>
                 </div>
                 <div class="message-content"></div>
+                <div class="message-actions"></div>
             </div>
         `;
         

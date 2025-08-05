@@ -111,6 +111,13 @@ async def register_user(
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
+@app.get("/", response_class=HTMLResponse)
+async def main_page(request: Request):
+    username = request.session.get("username")
+    if username is None:
+        return templates.TemplateResponse("login.html",{"request": request, "error": "用户会话已失效，请重新登录"})
+    return RedirectResponse(url="/chat", status_code=status.HTTP_303_SEE_OTHER)
+
 @app.post("/login")
 async def login_user(
         request: Request,
@@ -314,7 +321,7 @@ async def chat_endpoint(
         if retriever:
             docs = retriever.get_relevant_documents(message)
             context = "\n\n".join([doc.page_content for doc in docs])
-            print(f"检索到的内容是：{context}")
+            # print(f"检索到的内容是：{context}")
     
     # 生成对话提示
     prompt = get_prompt(
@@ -323,7 +330,7 @@ async def chat_endpoint(
         history=history,
         question=message
     )
-    print(f"当前prompt是{prompt}")
+    # print(f"当前prompt是{prompt}")
     # 调用大模型
     async def generate_response():
 
@@ -481,7 +488,7 @@ def get_conversation_history(conversation_id: str, db: Session) -> str:
     for msg in messages:
         role = "用户" if msg.role == "user" else "助手"
         history.append(f"{role}: {msg.content}")
-    print(f"获取的历史消息是：{history}")
+    # print(f"获取的历史消息是：{history}")
 
     # summary_prompt = get_prompt(scenario="历史摘要", history=history)
     # history_str = "\n".join(history)
@@ -526,7 +533,7 @@ def call_llm_model(prompt):
         model_provider="deepseek",
         api_key = deepseek_api_key,
         temperature=0.7)
-    print(f"当前 prompt 是：{prompt}")
+    # print(f"当前 prompt 是：{prompt}")
 
     for token in model.stream(prompt):
         yield token.content
