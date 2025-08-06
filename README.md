@@ -1,6 +1,6 @@
-# RAG 知识库 Demo
+# 智能测试用例生成 && 企业 RAG 知识库
 
-一个基于 FastAPI 和 LangChain 构建的检索增强生成（RAG）系统，包含 **需求分析** 、**测试用例生成**、**智能运维助手**、**产品指南知识库**等内容。
+一个基于 FastAPI 和 LangChain 构建的 RAG 系统，包含 **需求分析** 、**测试用例生成**、**智能运维助手**、**产品指南知识库**等内容。
 
 ## 主要功能
 
@@ -117,20 +117,6 @@ Demo 在线地址：http://119.91.21.107:8000/
 - Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
 - ReDoc: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
-
-## 贡献指南
-
-欢迎贡献！请遵循以下步骤：
-
-1. Fork 项目仓库
-2. 创建新的分支 (`git checkout -b feature/your-feature`)
-3. 提交更改 (`git commit -am 'Add some feature'`)
-4. 推送到分支 (`git push origin feature/your-feature`)
-5. 创建 Pull Request
-
-## 许可证
-
-本项目基于 [MIT 许可证](LICENSE)。
 
 ## 联系信息
 

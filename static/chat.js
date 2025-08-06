@@ -356,12 +356,15 @@ function setupEventListeners() {
             elements.chatMessages.innerHTML = '';
             // 添加场景特定的欢迎消息
             const scenarioWelcome = {
-                "产品手册": "本功能产品为容灾备份产品，你可以询问我关于如何使用我们备份产品的功能介绍，我会在此基础上为你解答",
-                "运维助手": "欢迎使用运维助手，我可以帮助您解决运维相关问题",
-                "需求挖掘": "需求分析场景已就绪，请描述您的需求",
-                "用例生成": "本场景会基于你的输入，自动生成测试用例，并支持导出"
+                "产品手册": `我是您的产品助手，专注于容灾备份产品领域。\n\n您可以询问我有关容灾备份产品的详细功能说明与操作指南。\n\n📌 例如：如何配置备份策略？`,
+
+                "运维助手": `我是您的智能运维助手，可以协助您处理服务器运维、故障排查和性能优化等问题。\n\n请告诉我您遇到的具体问题或需求，我将提供针对性的解决方案。\n\n📌 你可以这样问我：MySQL备份失败会是什么原因？`,
+
+                "需求挖掘": `本场景用于需求分析与挖掘，请描述您的业务背景或功能需求，我将协助您梳理系统需求并生成清晰的需求文档。\n\n📌 你可以这样问我：如何设计一个在线支付系统的需求？`,
+
+                "用例生成": `请输入您需要测试的功能描述，我将自动生成对应的测试用例，并支持导出 CSV 文件到 Excel 查看。\n\n📌 你可以这样问我：请根据用户登录功能生成测试用例。`
             };
-            
+
             const welcomeMsg = {
                 role: "assistant",
                 content: scenarioWelcome[appState.currentScenario] || "你好！我是你的智能助手"
@@ -396,6 +399,42 @@ function setupEventListeners() {
         
         document.querySelectorAll('.conversation-item').forEach(el => {
             el.classList.remove('active');
+        });
+    });
+
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const historyOverlay = document.getElementById('historyOverlay');
+    const closeHistoryBtn = document.createElement('button');
+
+    // 打开历史记录侧边栏
+    function openHistorySidebar() {
+        document.querySelector('.app-container').classList.add('history-open');
+    }
+
+    // 关闭历史记录侧边栏
+    function closeHistorySidebar() {
+        document.querySelector('.app-container').classList.remove('history-open');
+    }
+
+    // 事件监听
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', openHistorySidebar);
+    }
+
+    if (closeHistoryBtn) {
+        closeHistoryBtn.addEventListener('click', closeHistorySidebar);
+    }
+
+    if (historyOverlay) {
+        historyOverlay.addEventListener('click', closeHistorySidebar);
+    }
+
+    // 点击历史项时在移动端自动关闭侧边栏
+    document.querySelectorAll('.conversation-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                closeHistorySidebar();
+            }
         });
     });
 }
@@ -533,11 +572,7 @@ async function sendMessage() {
                 }
             }
         }
-                // 确保添加导出按钮（如果未在流中处理）
-        // if (appState.currentScenario === '用例生成' && !fullResponseReceived) {
-        //     aiMessageContainer.dataset.raw = aiResponse;
-        //     addExportButton(aiMessageContainer);
-        // }
+
 
                 // 确保添加导出按钮（如果未在流中处理）
         if (appState.currentScenario === '用例生成') {

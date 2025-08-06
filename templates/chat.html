@@ -11,6 +11,9 @@
 </head>
 <body>
     <div class="app-container">
+        <!-- 添加移动端菜单按钮 -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="打开菜单">☰</button>
+
         <!-- 左侧导航栏 -->
         <aside class="sidebar" aria-label="聊天导航">
             <div class="sidebar-header">
@@ -65,7 +68,7 @@
                             <div class="sender-name">智能助手</div>
                         </div>
                         <div class="message-content">
-                            你好！我是你的智能助手，我可以帮助你分析需求、生成测试用例、进行问题分析等，来开始我们的对话吧~
+                            你好！我是你的智能助手，我可以帮助你进行需求分析、测试用例生成、问题排查、文档查询等。请选择对应的场景，来开始我们的对话吧~~
                         </div>
                     </div>
                 </div>
@@ -87,6 +90,9 @@
                 © 2025 快乐生活 <a href="mailto:lzfdd937@163.com" class="email-link">lzfdd937@163.com</a>
             </footer> -->
         </main>
+        <div class="history-overlay" id="historyOverlay">
+            <div class="overlay-hint">点击空白区域关闭</div>
+        </div>
     </div>
 
 <script src="/static/chat.js"></script>
