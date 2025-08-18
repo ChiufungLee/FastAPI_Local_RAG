@@ -333,58 +333,80 @@ async def chat_endpoint(
     # print(f"当前prompt是{prompt}")
     # 调用大模型
     async def generate_response():
-
         ai_response = ""
-        words = call_llm_model(prompt)  
+        full_response_saved = False
         
-        # 流式输出每个token
-        for token in words:
-            ai_response += token
-            yield f"data: {json.dumps({'token': token})}\n\n"
-            await asyncio.sleep(0.02)  # 控制输出速度
-            
-        # 保存完整AI回复到数据库
-        ai_message = Message(
-            conversation_id=conversation_id,
-            role="assistant",
-            content=ai_response
-        )
-        db.add(ai_message)
-        db.commit()
-        
-        if new_conversation:
-            title_prompt = get_prompt(
-                "标题生成",
-                question=message
-            )
+        try:
+            words = call_llm_model(prompt)
+            for token in words:
+                # 检查客户端是否断开连接
+                if await request.is_disconnected():
+                    print("客户端已断开连接")
+                    break
+                    
+                ai_response += token
+                yield f"data: {json.dumps({'token': token})}\n\n"
+                await asyncio.sleep(0.02)
+        except GeneratorExit:
+            # 处理客户端断开连接
+            print("流式响应被中断")
+        finally:
+            # 保存响应
+            if ai_response and not full_response_saved:
+                save_ai_response(ai_response, conversation_id, db)
+                full_response_saved = True
 
-            title_str = ''.join(call_llm_model(title_prompt))
-            title = re.sub(r'[^a-zA-Z0-9\u4e00-\u9fa5\s]', '', title_str).strip()
-            
-            if len(title) > 10:
-                title = title[:10] + "..."
+        if not full_response_saved:
+            save_ai_response(ai_response, conversation_id, db)
+            full_response_saved = True
 
-            new_conversation.title = title
-            db.add(new_conversation)
-            db.commit()
-            db.refresh(new_conversation) 
-        
-        conversation = db.query(Conversation).filter(Conversation.id == conversation_id).first()
-        if conversation:
-            conversation.updated_at = func.now()
-            db.commit()
-        
-        yield f"data: {json.dumps({'full_response': ai_response, 'conversation_id': conversation_id})}\n\n"
-        
-        # 如果是新对话，发送额外信息
-        if new_conversation:
-            yield f"data: {json.dumps({'new_conversation_id': conversation_id, 'conversation_title': new_conversation.title})}\n\n"
-        
-        yield "data: [DONE]\n\n"
-    
+            yield f"data: {json.dumps({'full_response': ai_response, 'conversation_id': conversation_id})}\n\n"
+            
+            if new_conversation:
+                title_prompt = get_prompt(
+                    "标题生成",
+                    question=message
+                )
+
+                title_str = ''.join(call_llm_model(title_prompt))
+                title = re.sub(r'[^a-zA-Z0-9\u4e00-\u9fa5\s]', '', title_str).strip()
+                
+                if len(title) > 10:
+                    title = title[:10] + "..."
+
+                new_conversation.title = title
+                db.add(new_conversation)
+                db.commit()
+                db.refresh(new_conversation) 
+                yield f"data: {json.dumps({'new_conversation_id': conversation_id, 'conversation_title': new_conversation.title})}\n\n"
+            
+            yield "data: [DONE]\n\n"
     # 返回流式响应
     return StreamingResponse(generate_response(), media_type="text/event-stream")
 
+def save_ai_response(content, conversation_id, db):
+    """保存AI响应到数据库"""
+    if content:
+        ai_message = Message(
+            conversation_id=conversation_id,
+            role="assistant",
+            content=content
+        )
+        db.add(ai_message)
+        try:
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            print(f"保存消息失败: {e}")
+        
+        # 更新对话时间
+        conversation = db.query(Conversation).filter(Conversation.id == conversation_id).first()
+        if conversation:
+            conversation.updated_at = func.now()
+            try:
+                db.commit()
+            except:
+                db.rollback()
 
 # 删除对话
 @app.delete("/api/conversation/{conversation_id}")

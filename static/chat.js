@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 const userInfo = document.getElementById('userInfo');
 const dropdownContent = document.getElementById('dropdownContent');
-
+let currentRequestController = null;
 
 userInfo.addEventListener('click', function(event) {
     event.stopPropagation();
@@ -54,6 +54,14 @@ function logout() {
         window.location.href = "/logout";
     }
 }
+
+// 页面刷新前保存状态
+window.addEventListener('beforeunload', () => {
+    if (appState.isProcessing) {
+        // 提示用户
+        return "AI正在响应中，确定要离开吗？";
+    }
+});
 
 // 加载历史记录
 async function loadHistory(scenario) {
@@ -336,6 +344,14 @@ function setupEventListeners() {
     // 场景切换
     document.querySelectorAll('.function-item').forEach(item => {
         item.addEventListener('click', () => {
+            if (currentRequestController) {
+                currentRequestController.abort();
+                currentRequestController = null;
+                appState.isProcessing = false;
+                elements.chatInput.disabled = false;
+                elements.sendBtn.disabled = false;
+            }
+
             // 更新活动状态
             document.querySelectorAll('.function-item').forEach(el => {
                 el.classList.remove('active');
@@ -442,6 +458,13 @@ function setupEventListeners() {
 
 // 发送消息事件
 async function sendMessage() {
+
+    // 取消之前的请求
+    if (currentRequestController) {
+        currentRequestController.abort();
+        currentRequestController = null;
+    }
+
     const message = elements.chatInput.value.trim();
     if (!message || appState.isProcessing) return;
     
@@ -492,7 +515,9 @@ async function sendMessage() {
         cursor.className = 'typing-cursor';
         cursor.textContent = '思考中...';
         contentElement.appendChild(cursor);
-        
+
+        currentRequestController = new AbortController();
+
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
@@ -502,7 +527,8 @@ async function sendMessage() {
                 message: message,
                 scenario: appState.currentScenario,
                 conversation_id: appState.currentConversation
-            })
+            }),
+            signal: currentRequestController.signal
         });
         
         if (!response.ok) {
@@ -589,19 +615,24 @@ async function sendMessage() {
         }
         
     } catch (error) {
-        console.error('发送消息时出错:', error);
-        
-        // 显示错误消息
-        const errorMessage = {
-            role: 'assistant',
-            content: '处理您的请求时出错，请稍后再试。'
-        };
-        addMessageToChat(errorMessage);
+        if (error.name === 'AbortError') {
+            console.log('请求被取消');
+        } else {
+            console.error('发送消息时出错:', error);
+            
+            // 显示错误消息
+            const errorMessage = {
+                role: 'assistant',
+                content: '处理您的请求时出错，请稍后再试。'
+            };
+            addMessageToChat(errorMessage);
+        }
     } finally {
         // 重新启用输入和发送按钮
         appState.isProcessing = false;
         elements.chatInput.disabled = false;
         elements.chatInput.focus();
+        currentRequestController = null;
     }
 }
 
